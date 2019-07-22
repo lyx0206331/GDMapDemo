@@ -1,9 +1,11 @@
 package com.adrian.gdmapdemo
 
+import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import com.amap.api.maps.AMap
 import com.amap.api.maps.model.LatLng
+import com.amap.api.maps.model.MyLocationStyle
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
@@ -26,7 +28,9 @@ class MainActivity : AppCompatActivity() {
         super.onResume()
         mapUtils.onResume()
 
-//        addTestCircle(LatLng(113.944648, 22.549398))
+        mapUtils.myLocationType = MyLocationStyle.LOCATION_TYPE_SHOW
+        mapUtils.zoomLevel = 15f
+        addTestCircle(LatLng(113.937752, 22.545747))
     }
 
     override fun onPause() {
@@ -42,7 +46,7 @@ class MainActivity : AppCompatActivity() {
     private fun addTestCircle(center: LatLng) {
         for (i in 1 .. 200) {
             val random = Math.random()/1000
-            mapUtils.addCircle(LatLng(center.latitude, center.longitude), 5.0)
+            mapUtils.addCircle(LatLng(center.latitude + random, center.longitude + random), 5.0)
         }
     }
 

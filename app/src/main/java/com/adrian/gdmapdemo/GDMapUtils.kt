@@ -248,7 +248,8 @@ class GDMapUtils(val mapView: MapView) {
         }
 
     /** 获取缩放比例 */
-    var scalePerPixel: Float = map.scalePerPixel
+    var scalePerPixel: Float = 1f
+        get() = map.scalePerPixel
 
     /** marker点击监听 */
     var onMarkerClickListener: AMap.OnMarkerClickListener? = null
@@ -262,6 +263,13 @@ class GDMapUtils(val mapView: MapView) {
         set(value) {
             field = value
             map.setOnMarkerDragListener(field)
+        }
+
+    /** 地图缩放比例 */
+    var zoomLevel = 1f
+        set(value) {
+            field = value
+            map.moveCamera(CameraUpdateFactory.zoomTo(field))
         }
 
     fun onCreate(savedInstanceState: Bundle?) {
