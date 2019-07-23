@@ -34,6 +34,7 @@ class GDMapUtils(val mapView: MapView) {
      * MyLocationStyle.LOCATION_TYPE_LOCATE 定位一次，且将视角移动到地图中心点
      * MyLocationStyle.LOCATION_TYPE_FOLLOW 连续定位、且将视角移动到地图中心点，定位蓝点跟随设备移动。（1秒1次定位）
      * MyLocationStyle.LOCATION_TYPE_MAP_ROTATE 连续定位、且将视角移动到地图中心点，地图依照设备方向旋转，定位点会跟随设备移动。（1秒1次定位）
+     * MyLocationStyle.LOCATION_TYPE_LOCATION_ROTATE    连续定位、且将视角移动到地图中心点，定位点依照设备方向旋转，并且会跟随设备移动。（1秒1次定位）默认执行此种模式
      * 以下三种模式从5.1.0版本开始提供
      * MyLocationStyle.LOCATION_TYPE_LOCATION_ROTATE_NO_CENTER  连续定位、蓝点不会移动到地图中心点，定位点依照设备方向旋转，并且蓝点会跟随设备移动
      * MyLocationStyle.LOCATION_TYPE_FOLLOW_NO_CENTER   连续定位、蓝点不会移动到地图中心点，并且蓝点会跟随设备移动
@@ -53,7 +54,7 @@ class GDMapUtils(val mapView: MapView) {
             myLocationStyle?.showMyLocation(field)
         }
 
-    /** 连续定位模式下的定位间隔，只在连续定位模式下生效，单次定位模式下不会生效。单位为毫秒 */
+    /** 连续定位模式下的定位间隔，只在连续定位模式下生效，单次定位模式下不会生效。单位为毫秒。默认值：1000毫秒，如果传小于1000的任何值将按照1000计算 */
     var myLocationInterver = 2000L
         set(value) {
             field = value
@@ -117,10 +118,10 @@ class GDMapUtils(val mapView: MapView) {
 
     /**
      * 切换地图图层.Android 地图 SDK 提供了几种预置的地图图层，包括卫星图、白昼地图（即最常见的黄白色地图）、夜景地图、导航地图、路况图层
-     * MAP_TYPE_NAVI    导航地图
-     * MAP_TYPE_NIGHT   夜景地图
-     * MAP_TYPE_NORMAL  白昼地图（即普通地图）
-     * MAP_TYPE_SATELLITE   卫星图
+     * AMap.MAP_TYPE_NAVI    导航地图
+     * AMap.MAP_TYPE_NIGHT   夜景地图
+     * AMap.MAP_TYPE_NORMAL  白昼地图（即普通地图）
+     * AMap.MAP_TYPE_SATELLITE   卫星图
      */
     var mapType = AMap.MAP_TYPE_NORMAL
         set(value) {
@@ -196,8 +197,8 @@ class GDMapUtils(val mapView: MapView) {
 
     /**
      *  缩放按钮位置
-     *  ZOOM_POSITION_RIGHT_CENTER  右中间
-     *  ZOOM_POSITION_RIGHT_BUTTOM  右下角
+     *  AMapOptions.ZOOM_POSITION_RIGHT_CENTER  右中间
+     *  AMapOptions.ZOOM_POSITION_RIGHT_BUTTOM  右下角
      */
     var zoomCtrlPosition: Int = AMapOptions.ZOOM_POSITION_RIGHT_BUTTOM
         set(value) {
@@ -272,11 +273,46 @@ class GDMapUtils(val mapView: MapView) {
             map.moveCamera(CameraUpdateFactory.zoomTo(field))
         }
 
+    /** 缩放手势是否生效,双击地图可以使缩放级别增加1 (放大) */
+    var isZoomGesturesEnabled = true
+        set(value) {
+            field = value
+            map.uiSettings.isZoomGesturesEnabled = field
+        }
+
+    /** 滑动手势是否生效 */
+    var isScrollGesturesEnabled = true
+        set(value) {
+            field = value
+            map.uiSettings.isScrollGesturesEnabled = field
+        }
+
+    /** 旋转手势是否生效 */
+    var isRotateGesturesEnabled = true
+        set(value) {
+            field = value
+            map.uiSettings.isRotateGesturesEnabled = field
+        }
+
+    /** 倾斜手势是否生效 */
+    var isTiltGesturesEnabled = true
+        set(value) {
+            field = value
+            map.uiSettings.isTiltGesturesEnabled = field
+        }
+
+    /** 中心点进行手势操作是否生效.在对地图进行手势操作时（滑动手势除外），可以指定屏幕中心点后执行相应手势 */
+    var isCenterPointGestureEnable = true
+        set(value) {
+            field = value
+            map.uiSettings.isGestureScaleByMapCenter = field
+        }
+
     fun onCreate(savedInstanceState: Bundle?) {
         mapView.onCreate(savedInstanceState)
         map = mapView.map
 
-        setLocationStyle()
+//        setLocationStyle()
     }
 
     fun onSaveInstanceState(outState: Bundle) {
@@ -302,14 +338,15 @@ class GDMapUtils(val mapView: MapView) {
      * MyLocationStyle.LOCATION_TYPE_LOCATE 定位一次，且将视角移动到地图中心点
      * MyLocationStyle.LOCATION_TYPE_FOLLOW 连续定位、且将视角移动到地图中心点，定位蓝点跟随设备移动。（1秒1次定位）
      * MyLocationStyle.LOCATION_TYPE_MAP_ROTATE 连续定位、且将视角移动到地图中心点，地图依照设备方向旋转，定位点会跟随设备移动。（1秒1次定位）
+     * MyLocationStyle.LOCATION_TYPE_LOCATION_ROTATE    连续定位、且将视角移动到地图中心点，定位点依照设备方向旋转，并且会跟随设备移动。（1秒1次定位）默认执行此种模式
      * 以下三种模式从5.1.0版本开始提供
      * MyLocationStyle.LOCATION_TYPE_LOCATION_ROTATE_NO_CENTER  连续定位、蓝点不会移动到地图中心点，定位点依照设备方向旋转，并且蓝点会跟随设备移动
      * MyLocationStyle.LOCATION_TYPE_FOLLOW_NO_CENTER   连续定位、蓝点不会移动到地图中心点，并且蓝点会跟随设备移动
      * MyLocationStyle.LOCATION_TYPE_MAP_ROTATE_NO_CENTER   连续定位、蓝点不会移动到地图中心点，地图依照设备方向旋转，并且蓝点会跟随设备移动
      */
-    fun setLocationStyle(locationType: Int = MyLocationStyle.LOCATION_TYPE_LOCATION_ROTATE) {
+    fun setLocationStyle(locationType: Int = MyLocationStyle.LOCATION_TYPE_LOCATION_ROTATE, interver: Long = 2000L) {
         myLocationType = locationType
-        myLocationInterver = 2000L
+        myLocationInterver = interver
         showMyLocation = true
         isMyLocationEnable = true
     }
@@ -382,8 +419,35 @@ class GDMapUtils(val mapView: MapView) {
      * @param   strokeWidth 圆边宽
      * @param   zIndex  圆在z轴的值
      */
-    @JvmOverloads fun addCircle(center: LatLng, radius: Double, @ColorInt fillColor: Int = Color.TRANSPARENT, @ColorInt strokeColor: Int = Color.BLACK, strokeWidth: Float = 1f, zIndex: Float = 0f): Circle {
+    @JvmOverloads
+    fun addCircle(
+        center: LatLng,
+        radius: Double, @ColorInt fillColor: Int = Color.TRANSPARENT, @ColorInt strokeColor: Int = Color.BLACK,
+        strokeWidth: Float = 1f,
+        zIndex: Float = 1f
+    ): Circle {
         val options = CircleOptions().zIndex(zIndex).center(center).radius(radius).fillColor(fillColor).strokeColor(strokeColor).strokeWidth(strokeWidth)
         return map.addCircle(options)
     }
+
+    /**
+     * 指定屏幕中心点.x、y均为屏幕坐标，屏幕左上角为坐标原点，即(0,0)点
+     * @param x
+     * @param y
+     */
+    fun setPoint2Center(x: Int, y: Int) {
+        isCenterPointGestureEnable = true
+        map.setPointToCenter(x, y)
+    }
+
+    /**
+     * 限制地图的显示范围
+     * 注意：如果限制了地图显示范围，地图旋转手势将会失效
+     * @since v4.1.0
+     */
+    fun limitDisplayBounds(southWestLatLng: LatLng, northEastLatLng: LatLng) {
+        val latLngBounds = LatLngBounds(southWestLatLng, northEastLatLng)
+        map.setMapStatusLimits(latLngBounds)
+    }
+
 }
