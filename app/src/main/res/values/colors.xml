@@ -5,4 +5,5 @@
     <color name="colorAccent">#D81B60</color>
 
     <color name="translucent">#80000000</color>
+    <color name="translucent_light">#80ffffff</color>
 </resources>

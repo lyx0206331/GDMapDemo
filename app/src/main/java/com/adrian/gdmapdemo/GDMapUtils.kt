@@ -1,5 +1,6 @@
 package com.adrian.gdmapdemo
 
+import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.os.Bundle
 import androidx.annotation.ColorInt
@@ -14,6 +15,10 @@ import com.amap.api.maps.model.*
 class GDMapUtils(val mapView: MapView) {
 
     private lateinit var map: AMap
+
+    private var markers = arrayListOf<Marker>()
+
+    private var circles = arrayListOf<Circle>()
 
     var myLocationStyle: MyLocationStyle? = null
         set(value) {
@@ -44,6 +49,7 @@ class GDMapUtils(val mapView: MapView) {
         set(value) {
             field = value
             myLocationStyle?.myLocationType(field)
+            map.myLocationStyle = myLocationStyle
         }
 
     /** 设置是否显示定位小蓝点，用于满足只想使用定位，不想使用定位小蓝点的场景，设置false以后图面上不再有定位蓝点的概念，但是会持续回调位置信息 */
@@ -52,6 +58,7 @@ class GDMapUtils(val mapView: MapView) {
             field = value
             //方法自5.1.0版本后支持
             myLocationStyle?.showMyLocation(field)
+            map.myLocationStyle = myLocationStyle
         }
 
     /** 连续定位模式下的定位间隔，只在连续定位模式下生效，单次定位模式下不会生效。单位为毫秒。默认值：1000毫秒，如果传小于1000的任何值将按照1000计算 */
@@ -59,6 +66,7 @@ class GDMapUtils(val mapView: MapView) {
         set(value) {
             field = value
             myLocationStyle?.interval(field)
+            map.myLocationStyle = myLocationStyle
         }
 
     /** 设置为true表示启动显示定位蓝点，false表示隐藏定位蓝点并不进行定位，默认是false */
@@ -73,6 +81,7 @@ class GDMapUtils(val mapView: MapView) {
         set(value) {
             field = value
             myLocationStyle?.myLocationIcon(field)
+            map.myLocationStyle = myLocationStyle
         }
 
     /** 精度圈边框宽度 */
@@ -80,6 +89,7 @@ class GDMapUtils(val mapView: MapView) {
         set(value) {
             field = value
             myLocationStyle?.strokeWidth(field)
+            map.myLocationStyle = myLocationStyle
         }
 
     /** 定位蓝点精度圆圈的边框颜色 */
@@ -87,6 +97,7 @@ class GDMapUtils(val mapView: MapView) {
         set(value) {
             field = value
             myLocationStyle?.strokeColor(field)
+            map.myLocationStyle = myLocationStyle
         }
 
     /** 定位蓝点精度圆圈的填充颜色 */
@@ -94,6 +105,7 @@ class GDMapUtils(val mapView: MapView) {
         set(value) {
             field = value
             myLocationStyle?.radiusFillColor(field)
+            map.myLocationStyle = myLocationStyle
         }
 
     /** 实现 AMap.OnMyLocationChangeListener 监听器，通过回调方法获取经纬度信息 */
@@ -344,10 +356,13 @@ class GDMapUtils(val mapView: MapView) {
      * MyLocationStyle.LOCATION_TYPE_FOLLOW_NO_CENTER   连续定位、蓝点不会移动到地图中心点，并且蓝点会跟随设备移动
      * MyLocationStyle.LOCATION_TYPE_MAP_ROTATE_NO_CENTER   连续定位、蓝点不会移动到地图中心点，地图依照设备方向旋转，并且蓝点会跟随设备移动
      */
-    fun setLocationStyle(locationType: Int = MyLocationStyle.LOCATION_TYPE_LOCATION_ROTATE, interver: Long = 2000L) {
-        myLocationType = locationType
-        myLocationInterver = interver
-        showMyLocation = true
+    fun setLocationStyle(locationType: Int = MyLocationStyle.LOCATION_TYPE_LOCATION_ROTATE, interver: Long = 2000L, icon: BitmapDescriptor) {
+        val myLocationStyle = MyLocationStyle()
+        myLocationStyle.myLocationType(locationType)
+        myLocationStyle.interval(interver)
+        myLocationStyle.myLocationIcon(icon)
+        myLocationStyle.showMyLocation(true)
+        this.myLocationStyle = myLocationStyle
         isMyLocationEnable = true
     }
 
